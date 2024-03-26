@@ -152,7 +152,7 @@
         <Bp>
           <Number>0</Number>
           <Type>0</Type>
-          <LineNumber>210</LineNumber>
+          <LineNumber>214</LineNumber>
           <EnabledFlag>1</EnabledFlag>
           <Address>0</Address>
           <ByteObject>0</ByteObject>
@@ -168,20 +168,27 @@
         <Bp>
           <Number>1</Number>
           <Type>0</Type>
-          <LineNumber>214</LineNumber>
+          <LineNumber>210</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134224194</Address>
+          <Address>0</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
           <SizeOfObject>0</SizeOfObject>
           <BreakByAccess>0</BreakByAccess>
-          <BreakIfRCount>1</BreakIfRCount>
-          <Filename>../Core/Src/stm32g4xx_it.c</Filename>
+          <BreakIfRCount>0</BreakIfRCount>
+          <Filename>startup_stm32g474xx.s</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\GaN_Test\../Core/Src/stm32g4xx_it.c\214</Expression>
+          <Expression></Expression>
         </Bp>
       </Breakpoint>
+      <WatchWindow1>
+        <Ww>
+          <count>0</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>adc1_val_buf</ItemText>
+        </Ww>
+      </WatchWindow1>
       <Tracepoint>
         <THDelay>0</THDelay>
       </Tracepoint>
@@ -310,7 +317,7 @@
       <GroupNumber>2</GroupNumber>
       <FileNumber>4</FileNumber>
       <FileType>1</FileType>
-      <tvExp>1</tvExp>
+      <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>../Core/Src/hrtim.c</PathWithFileName>

@@ -55,6 +55,12 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+uint16_t i;
+#define ADC1_CHANNEL_CNT 1 	//
+#define ADC1_CHANNEL_FRE 1	//
+uint16_t adc1_val_buf[ADC1_CHANNEL_CNT*ADC1_CHANNEL_FRE]; //
+uint32_t adc1_aver_val[ADC1_CHANNEL_CNT] = {0}; 					//
+uint16_t value[ADC1_CHANNEL_CNT] = {0};										//
 
 /* USER CODE END 0 */
 
@@ -101,7 +107,13 @@ int main(void)
 	HAL_HRTIM_WaveformOutputStart(&hhrtim1,  HRTIM_OUTPUT_TB1);
 	HAL_HRTIM_WaveformCounterStart(&hhrtim1, HRTIM_TIMERID_TIMER_C);
 	HAL_HRTIM_WaveformOutputStart(&hhrtim1,  HRTIM_OUTPUT_TC1);
-	__HAL_DBGMCU_FREEZE_TIM4();
+	
+	//if(HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adc1_val_buf, (ADC1_CHANNEL_CNT*ADC1_CHANNEL_FRE)) != HAL_OK)
+  {
+    /* Start Conversation Error */
+//    Error_Handler(); 
+  }
+
   /* USER CODE END 2 */
 
   /* Infinite loop */

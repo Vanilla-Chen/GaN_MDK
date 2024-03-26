@@ -208,10 +208,10 @@ void HRTIM1_Master_IRQHandler(void)
 	static uint16_t i;
 	GPIOC->BSRR = GPIO_PIN_2;	//GPIO_PIN_SET
 	
-	
-	
 //	if(i>=999)i = 0;
-	SIN = sinf(i);
+	SIN = sinf(0.01f);
+	
+	
   /* USER CODE END HRTIM1_Master_IRQn 0 */
   //HAL_HRTIM_IRQHandler(&hhrtim1,HRTIM_TIMERINDEX_MASTER);
   /* USER CODE BEGIN HRTIM1_Master_IRQn 1 */
