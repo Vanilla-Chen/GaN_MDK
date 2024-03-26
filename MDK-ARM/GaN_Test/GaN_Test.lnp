@@ -1,0 +1,25 @@
+--cpu=Cortex-M4.fp
+"gan_test\startup_stm32g474xx.o"
+"gan_test\main.o"
+"gan_test\stm32g4xx_it.o"
+"gan_test\stm32g4xx_hal_msp.o"
+"gan_test\stm32g4xx_hal_tim.o"
+"gan_test\stm32g4xx_hal_tim_ex.o"
+"gan_test\stm32g4xx_hal_pwr_ex.o"
+"gan_test\stm32g4xx_hal.o"
+"gan_test\stm32g4xx_hal_rcc.o"
+"gan_test\stm32g4xx_hal_rcc_ex.o"
+"gan_test\stm32g4xx_hal_flash.o"
+"gan_test\stm32g4xx_hal_flash_ex.o"
+"gan_test\stm32g4xx_hal_flash_ramfunc.o"
+"gan_test\stm32g4xx_hal_gpio.o"
+"gan_test\stm32g4xx_hal_exti.o"
+"gan_test\stm32g4xx_hal_dma.o"
+"gan_test\stm32g4xx_hal_dma_ex.o"
+"gan_test\stm32g4xx_hal_pwr.o"
+"gan_test\stm32g4xx_hal_cortex.o"
+"gan_test\system_stm32g4xx.o"
+--strict --scatter "GaN_Test\GaN_Test.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "GaN_Test.map" -o GaN_Test\GaN_Test.axf
