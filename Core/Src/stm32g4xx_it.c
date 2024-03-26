@@ -204,11 +204,21 @@ void SysTick_Handler(void)
 void HRTIM1_Master_IRQHandler(void)
 {
   /* USER CODE BEGIN HRTIM1_Master_IRQn 0 */
-
+	volatile static float SIN;
+	static uint16_t i;
+	GPIOC->BSRR = GPIO_PIN_2;	//GPIO_PIN_SET
+	
+	
+	
+//	if(i>=999)i = 0;
+	SIN = sinf(i);
   /* USER CODE END HRTIM1_Master_IRQn 0 */
-  HAL_HRTIM_IRQHandler(&hhrtim1,HRTIM_TIMERINDEX_MASTER);
+  //HAL_HRTIM_IRQHandler(&hhrtim1,HRTIM_TIMERINDEX_MASTER);
   /* USER CODE BEGIN HRTIM1_Master_IRQn 1 */
 
+	__HAL_HRTIM_MASTER_CLEAR_IT(&hhrtim1, HRTIM_MASTER_IT_MUPD);
+	GPIOC->BRR = GPIO_PIN_2;	//GPIO_PIN_RESET
+	
   /* USER CODE END HRTIM1_Master_IRQn 1 */
 }
 

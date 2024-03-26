@@ -1,30 +1,32 @@
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_exti.c
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h
-gan_test\stm32g4xx_hal_exti.o: ../Core/Inc/stm32g4xx_hal_conf.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_rcc.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_def.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/CMSIS/Device/ST/STM32G4xx/Include/stm32g4xx.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/CMSIS/Device/ST/STM32G4xx/Include/stm32g474xx.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/CMSIS/Include/core_cm4.h
-gan_test\stm32g4xx_hal_exti.o: D:\Program Files\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/CMSIS/Include/cmsis_version.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/CMSIS/Include/cmsis_compiler.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/CMSIS/Include/mpu_armv7.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/CMSIS/Device/ST/STM32G4xx/Include/system_stm32g4xx.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-gan_test\stm32g4xx_hal_exti.o: D:\Program Files\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_rcc_ex.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_gpio.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_gpio_ex.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_dma.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_dma_ex.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_cortex.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_exti.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_flash.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_flash_ex.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_flash_ramfunc.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_hrtim.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_pwr.h
-gan_test\stm32g4xx_hal_exti.o: ../Drivers/STM32G4xx_HAL_Driver/Inc/stm32g4xx_hal_pwr_ex.h
+gan_test/stm32g4xx_hal_exti.o: \
+  ..\Drivers\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_exti.c \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal.h \
+  ..\Core\Inc\stm32g4xx_hal_conf.h \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_rcc.h \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_def.h \
+  ..\Drivers\CMSIS\Device\ST\STM32G4xx\Include\stm32g4xx.h \
+  ..\Drivers\CMSIS\Device\ST\STM32G4xx\Include\stm32g474xx.h \
+  ..\Drivers\CMSIS\Include\core_cm4.h \
+  D:\Program\ Files\Keil_v5\ARM\ARMCLANG\Bin\..\include\stdint.h \
+  ..\Drivers\CMSIS\Include\cmsis_version.h \
+  ..\Drivers\CMSIS\Include\cmsis_compiler.h \
+  ..\Drivers\CMSIS\Include\cmsis_armclang.h \
+  D:\Program\ Files\Keil_v5\ARM\ARMCLANG\Bin\..\include\arm_compat.h \
+  D:\Program\ Files\Keil_v5\ARM\ARMCLANG\Bin\..\include\arm_acle.h \
+  ..\Drivers\CMSIS\Include\mpu_armv7.h \
+  ..\Drivers\CMSIS\Device\ST\STM32G4xx\Include\system_stm32g4xx.h \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h \
+  D:\Program\ Files\Keil_v5\ARM\ARMCLANG\Bin\..\include\stddef.h \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_rcc_ex.h \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_gpio.h \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_gpio_ex.h \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_dma.h \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_dma_ex.h \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_cortex.h \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_exti.h \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_flash.h \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_flash_ex.h \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_flash_ramfunc.h \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_hrtim.h \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_pwr.h \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_pwr_ex.h
