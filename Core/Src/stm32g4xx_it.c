@@ -55,6 +55,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
+extern DMA_HandleTypeDef hdma_adc1;
 extern HRTIM_HandleTypeDef hhrtim1;
 /* USER CODE BEGIN EV */
 
@@ -199,6 +200,33 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
+  * @brief This function handles DMA1 channel1 global interrupt.
+  */
+void DMA1_Channel1_IRQHandler(void)
+{
+  /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
+//	static uint16_t i;
+//	if(i)GPIOC->BSRR = GPIO_PIN_2;	//GPIO_PIN_SET
+//  else GPIOC->BRR = GPIO_PIN_2;	//GPIO_PIN_RESET
+	GPIOC->BSRR = GPIO_PIN_2;	//GPIO_PIN_SET
+  /* USER CODE END DMA1_Channel1_IRQn 0 */
+  /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
+	
+	/* Clear the transfer complete flag */
+	hdma_adc1.DmaBaseAddress->IFCR = ((uint32_t)DMA_ISR_TCIF1 << (hdma_adc1.ChannelIndex & 0x1FU));
+	/* Process Unlocked */
+	__HAL_UNLOCK(&hdma_adc1);
+	if (hdma_adc1.XferCpltCallback != NULL)
+	{
+		/* Transfer complete callback */
+		hdma_adc1.XferCpltCallback(&hdma_adc1);
+	}
+	GPIOC->BRR = GPIO_PIN_2;	//GPIO_PIN_RESET
+	//HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adc1_val_buf, (3*1));
+  /* USER CODE END DMA1_Channel1_IRQn 1 */
+}
+
+/**
   * @brief This function handles HRTIM master timer global interrupt.
   */
 void HRTIM1_Master_IRQHandler(void)
@@ -206,18 +234,18 @@ void HRTIM1_Master_IRQHandler(void)
   /* USER CODE BEGIN HRTIM1_Master_IRQn 0 */
 	volatile static float SIN;
 	static uint16_t i;
-	GPIOC->BSRR = GPIO_PIN_2;	//GPIO_PIN_SET
+	//GPIOC->BSRR = GPIO_PIN_2;	//GPIO_PIN_SET
 	
 //	if(i>=999)i = 0;
-	SIN = sinf(0.01f);
+	//SIN = sinf(0.01f);
 	
 	
+
   /* USER CODE END HRTIM1_Master_IRQn 0 */
-  //HAL_HRTIM_IRQHandler(&hhrtim1,HRTIM_TIMERINDEX_MASTER);
   /* USER CODE BEGIN HRTIM1_Master_IRQn 1 */
 
 	__HAL_HRTIM_MASTER_CLEAR_IT(&hhrtim1, HRTIM_MASTER_IT_MUPD);
-	GPIOC->BRR = GPIO_PIN_2;	//GPIO_PIN_RESET
+	//GPIOC->BRR = GPIO_PIN_2;	//GPIO_PIN_RESET
 	
   /* USER CODE END HRTIM1_Master_IRQn 1 */
 }

@@ -18,6 +18,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
+#include "dma.h"
 #include "hrtim.h"
 #include "gpio.h"
 
@@ -44,7 +46,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+extern DMA_HandleTypeDef hdma_adc1;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -56,7 +58,7 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 uint16_t i;
-#define ADC1_CHANNEL_CNT 1 	//
+#define ADC1_CHANNEL_CNT 3 	//
 #define ADC1_CHANNEL_FRE 1	//
 uint16_t adc1_val_buf[ADC1_CHANNEL_CNT*ADC1_CHANNEL_FRE]; //
 uint32_t adc1_aver_val[ADC1_CHANNEL_CNT] = {0}; 					//
@@ -92,27 +94,23 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_HRTIM1_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
-//	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_1);
-//	HAL_TIMEx_PWMN_Start(&htim1,TIM_CHANNEL_1);
-//	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_2);
-//	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_3);HRTIM_TIMERID_MASTER
+
+	HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TB1|
+																					HRTIM_OUTPUT_TC1|
+																					HRTIM_OUTPUT_TA1|
+																					HRTIM_OUTPUT_TA2);
+	HAL_HRTIM_WaveformCounterStart(&hhrtim1,HRTIM_TIMERID_MASTER|
+																					HRTIM_TIMERID_TIMER_A|
+																					HRTIM_TIMERID_TIMER_B|
+																					HRTIM_TIMERID_TIMER_C
+																					);
 	HAL_HRTIM_WaveformCounterStart_IT(&hhrtim1, HRTIM_TIMERID_MASTER);
-	HAL_HRTIM_WaveformCounterStart(&hhrtim1, HRTIM_TIMERID_MASTER);
-	
-	HAL_HRTIM_WaveformCounterStart(&hhrtim1, HRTIM_TIMERID_TIMER_A);
-	HAL_HRTIM_WaveformOutputStart(&hhrtim1,  HRTIM_OUTPUT_TA1|HRTIM_OUTPUT_TA2);
-	HAL_HRTIM_WaveformCounterStart(&hhrtim1, HRTIM_TIMERID_TIMER_B);
-	HAL_HRTIM_WaveformOutputStart(&hhrtim1,  HRTIM_OUTPUT_TB1);
-	HAL_HRTIM_WaveformCounterStart(&hhrtim1, HRTIM_TIMERID_TIMER_C);
-	HAL_HRTIM_WaveformOutputStart(&hhrtim1,  HRTIM_OUTPUT_TC1);
-	
-	//if(HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adc1_val_buf, (ADC1_CHANNEL_CNT*ADC1_CHANNEL_FRE)) != HAL_OK)
-  {
-    /* Start Conversation Error */
-//    Error_Handler(); 
-  }
+	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adc1_val_buf, (ADC1_CHANNEL_CNT*1));
+	__HAL_DMA_DISABLE_IT(&hdma_adc1, (DMA_IT_HT | DMA_IT_TE));
 
   /* USER CODE END 2 */
 
