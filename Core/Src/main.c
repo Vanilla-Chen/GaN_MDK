@@ -110,8 +110,19 @@ int main(void)
 																					);
 	HAL_HRTIM_WaveformCounterStart_IT(&hhrtim1, HRTIM_TIMERID_MASTER);
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adc1_val_buf, (ADC1_CHANNEL_CNT*1));
-	__HAL_DMA_DISABLE_IT(&hdma_adc1, (DMA_IT_HT | DMA_IT_TE));
+	
+	//close DMA all interrupt 
+	//__HAL_DMA_DISABLE_IT(&hdma_adc1, (DMA_IT_TC| DMA_IT_HT | DMA_IT_TE));	
+	//close DMA Half transfer complete interrupt 
+	__HAL_DMA_DISABLE_IT(&hdma_adc1, (DMA_IT_HT | DMA_IT_TE));	
 
+	/**	Notices (ToDo
+		* ADC sampling location
+	  * 	change adc trigger location hrtim.c pCompareCfg.CompareValue = MASTER_PERIOD;
+		* 	MASTER_PERIOD -> H    MASTER_PERIOD*0.5 -> L
+		* 	MASTER_UPDATA -> H
+	  * 	debug note hrtim amd dma nvic HAL_NVIC_SetPriority
+	  */
   /* USER CODE END 2 */
 
   /* Infinite loop */

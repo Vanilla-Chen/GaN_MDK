@@ -64,133 +64,6 @@ extern HRTIM_HandleTypeDef hhrtim1;
 /******************************************************************************/
 /*           Cortex-M4 Processor Interruption and Exception Handlers          */
 /******************************************************************************/
-/**
-  * @brief This function handles Non maskable interrupt.
-  */
-void NMI_Handler(void)
-{
-  /* USER CODE BEGIN NonMaskableInt_IRQn 0 */
-
-  /* USER CODE END NonMaskableInt_IRQn 0 */
-  /* USER CODE BEGIN NonMaskableInt_IRQn 1 */
-  while (1)
-  {
-  }
-  /* USER CODE END NonMaskableInt_IRQn 1 */
-}
-
-/**
-  * @brief This function handles Hard fault interrupt.
-  */
-void HardFault_Handler(void)
-{
-  /* USER CODE BEGIN HardFault_IRQn 0 */
-
-  /* USER CODE END HardFault_IRQn 0 */
-  while (1)
-  {
-    /* USER CODE BEGIN W1_HardFault_IRQn 0 */
-    /* USER CODE END W1_HardFault_IRQn 0 */
-  }
-}
-
-/**
-  * @brief This function handles Memory management fault.
-  */
-void MemManage_Handler(void)
-{
-  /* USER CODE BEGIN MemoryManagement_IRQn 0 */
-
-  /* USER CODE END MemoryManagement_IRQn 0 */
-  while (1)
-  {
-    /* USER CODE BEGIN W1_MemoryManagement_IRQn 0 */
-    /* USER CODE END W1_MemoryManagement_IRQn 0 */
-  }
-}
-
-/**
-  * @brief This function handles Prefetch fault, memory access fault.
-  */
-void BusFault_Handler(void)
-{
-  /* USER CODE BEGIN BusFault_IRQn 0 */
-
-  /* USER CODE END BusFault_IRQn 0 */
-  while (1)
-  {
-    /* USER CODE BEGIN W1_BusFault_IRQn 0 */
-    /* USER CODE END W1_BusFault_IRQn 0 */
-  }
-}
-
-/**
-  * @brief This function handles Undefined instruction or illegal state.
-  */
-void UsageFault_Handler(void)
-{
-  /* USER CODE BEGIN UsageFault_IRQn 0 */
-
-  /* USER CODE END UsageFault_IRQn 0 */
-  while (1)
-  {
-    /* USER CODE BEGIN W1_UsageFault_IRQn 0 */
-    /* USER CODE END W1_UsageFault_IRQn 0 */
-  }
-}
-
-/**
-  * @brief This function handles System service call via SWI instruction.
-  */
-void SVC_Handler(void)
-{
-  /* USER CODE BEGIN SVCall_IRQn 0 */
-
-  /* USER CODE END SVCall_IRQn 0 */
-  /* USER CODE BEGIN SVCall_IRQn 1 */
-
-  /* USER CODE END SVCall_IRQn 1 */
-}
-
-/**
-  * @brief This function handles Debug monitor.
-  */
-void DebugMon_Handler(void)
-{
-  /* USER CODE BEGIN DebugMonitor_IRQn 0 */
-
-  /* USER CODE END DebugMonitor_IRQn 0 */
-  /* USER CODE BEGIN DebugMonitor_IRQn 1 */
-
-  /* USER CODE END DebugMonitor_IRQn 1 */
-}
-
-/**
-  * @brief This function handles Pendable request for system service.
-  */
-void PendSV_Handler(void)
-{
-  /* USER CODE BEGIN PendSV_IRQn 0 */
-
-  /* USER CODE END PendSV_IRQn 0 */
-  /* USER CODE BEGIN PendSV_IRQn 1 */
-
-  /* USER CODE END PendSV_IRQn 1 */
-}
-
-/**
-  * @brief This function handles System tick timer.
-  */
-void SysTick_Handler(void)
-{
-  /* USER CODE BEGIN SysTick_IRQn 0 */
-
-  /* USER CODE END SysTick_IRQn 0 */
-  HAL_IncTick();
-  /* USER CODE BEGIN SysTick_IRQn 1 */
-
-  /* USER CODE END SysTick_IRQn 1 */
-}
 
 /******************************************************************************/
 /* STM32G4xx Peripheral Interrupt Handlers                                    */
@@ -208,7 +81,8 @@ void DMA1_Channel1_IRQHandler(void)
 //	static uint16_t i;
 //	if(i)GPIOC->BSRR = GPIO_PIN_2;	//GPIO_PIN_SET
 //  else GPIOC->BRR = GPIO_PIN_2;	//GPIO_PIN_RESET
-	GPIOC->BSRR = GPIO_PIN_2;	//GPIO_PIN_SET
+	/*252ns delay*/
+	//GPIOC->BSRR = GPIO_PIN_2;	//GPIO_PIN_SET
   /* USER CODE END DMA1_Channel1_IRQn 0 */
   /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
 	
@@ -221,7 +95,8 @@ void DMA1_Channel1_IRQHandler(void)
 		/* Transfer complete callback */
 		hdma_adc1.XferCpltCallback(&hdma_adc1);
 	}
-	GPIOC->BRR = GPIO_PIN_2;	//GPIO_PIN_RESET
+	/*284ns delay*/
+	//GPIOC->BRR = GPIO_PIN_2;	//GPIO_PIN_RESET
 	//HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adc1_val_buf, (3*1));
   /* USER CODE END DMA1_Channel1_IRQn 1 */
 }
@@ -234,22 +109,48 @@ void HRTIM1_Master_IRQHandler(void)
   /* USER CODE BEGIN HRTIM1_Master_IRQn 0 */
 	volatile static float SIN;
 	static uint16_t i;
-	//GPIOC->BSRR = GPIO_PIN_2;	//GPIO_PIN_SET
+	/*70ns delay*/
+	GPIOC->BSRR = GPIO_PIN_2;	//GPIO_PIN_SET
 	
-//	if(i>=999)i = 0;
+	//	if(i>=999)i = 0;
 	//SIN = sinf(0.01f);
 	
 	
 
   /* USER CODE END HRTIM1_Master_IRQn 0 */
   /* USER CODE BEGIN HRTIM1_Master_IRQn 1 */
-
+	
+	/*70ns delay*/
 	__HAL_HRTIM_MASTER_CLEAR_IT(&hhrtim1, HRTIM_MASTER_IT_MUPD);
-	//GPIOC->BRR = GPIO_PIN_2;	//GPIO_PIN_RESET
+	GPIOC->BRR = GPIO_PIN_2;	//GPIO_PIN_RESET
 	
   /* USER CODE END HRTIM1_Master_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
-
+//void DMA1_Channel1_IRQHandler(void)
+//{
+//  /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
+////	static uint16_t i;
+////	if(i)GPIOC->BSRR = GPIO_PIN_2;	//GPIO_PIN_SET
+////  else GPIOC->BRR = GPIO_PIN_2;	//GPIO_PIN_RESET
+//	/*252ns delay*/
+//	GPIOC->BSRR = GPIO_PIN_2;	//GPIO_PIN_SET
+//  /* USER CODE END DMA1_Channel1_IRQn 0 */
+//  /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
+//	
+//	/* Clear the transfer complete flag */
+//	hdma_adc1.DmaBaseAddress->IFCR = ((uint32_t)DMA_ISR_TCIF1 << (hdma_adc1.ChannelIndex & 0x1FU));
+//	/* Process Unlocked */
+//	__HAL_UNLOCK(&hdma_adc1);
+//	if (hdma_adc1.XferCpltCallback != NULL)
+//	{
+//		/* Transfer complete callback */
+//		hdma_adc1.XferCpltCallback(&hdma_adc1);
+//	}
+//	/*284ns delay*/
+//	GPIOC->BRR = GPIO_PIN_2;	//GPIO_PIN_RESET
+//	//HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adc1_val_buf, (3*1));
+//  /* USER CODE END DMA1_Channel1_IRQn 1 */
+//}
 /* USER CODE END 1 */
