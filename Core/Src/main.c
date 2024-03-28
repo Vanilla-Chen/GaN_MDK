@@ -112,9 +112,9 @@ int main(void)
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adc1_val_buf, (ADC1_CHANNEL_CNT*1));
 	
 	//close DMA all interrupt 
-	//__HAL_DMA_DISABLE_IT(&hdma_adc1, (DMA_IT_TC| DMA_IT_HT | DMA_IT_TE));	
+	__HAL_DMA_DISABLE_IT(&hdma_adc1, (DMA_IT_TC| DMA_IT_HT | DMA_IT_TE));	
 	//close DMA Half transfer complete interrupt 
-	__HAL_DMA_DISABLE_IT(&hdma_adc1, (DMA_IT_HT | DMA_IT_TE));	
+	//__HAL_DMA_DISABLE_IT(&hdma_adc1, (DMA_IT_HT | DMA_IT_TE));	
 
 	/**	Notices (ToDo
 		* ADC sampling location
