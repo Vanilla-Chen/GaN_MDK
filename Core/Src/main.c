@@ -128,6 +128,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	//uint16_t i = 0;
+	GPIOC->BSRR = GPIO_PIN_3;
   while (1)
   {
     /* USER CODE END WHILE */
