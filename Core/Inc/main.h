@@ -57,12 +57,12 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define TIM_PERIOD MASTER_PERIOD/2
-#define MASTER_PERIOD 170
-#define TIM_A_DUTY 0.5
-#define TIM_B_DUTY 0.25
-#define DEADTIME 50
-#define TIM_C_DUTY 0.1
+#define TIM_PERIOD (MASTER_PERIOD/2)
+#define MASTER_PERIOD 5440
+#define TIM_A_DUTY 0.5f
+#define TIM_B_DUTY 0.25f
+#define DEADTIME 15
+#define TIM_C_DUTY 0.1f
 
 /* USER CODE BEGIN Private defines */
 

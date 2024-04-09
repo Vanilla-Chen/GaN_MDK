@@ -110,19 +110,62 @@ void HRTIM1_Master_IRQHandler(void)
 	volatile static float SIN;
 	static uint16_t i;
 	/*70ns delay*/
-	GPIOC->BSRR = GPIO_PIN_2;	//GPIO_PIN_SET
+	GPIOC->BSRR = GPIO_PIN_1;	//GPIO_PIN_SET
 	
+/** TimerA
+	* CMP1xR   SET
+	* CMP3xR RESET	
+	* TA1+  TA2-
+	* @NOTE CMPxxR  Min:	64		
+	*								MAX:	TIM_PERIOD-64
+	*/
+	/* 0% */
+	hhrtim1.Instance->sTimerxRegs[0].CMP1xR = TIM_PERIOD+1;		
+	hhrtim1.Instance->sTimerxRegs[0].CMP3xR = 0;							
+	/* 5-95% */
+//	hhrtim1.Instance->sTimerxRegs[0].CMP1xR = 0;								
+//	hhrtim1.Instance->sTimerxRegs[0].CMP3xR = TIM_PERIOD-64;  							//Min 64
+	/* 100% */
+//	hhrtim1.Instance->sTimerxRegs[0].CMP1xR = 0;							
+//	hhrtim1.Instance->sTimerxRegs[0].CMP3xR = TIM_PERIOD+1;   
+/* TimerA */
+	
+/** TimerB
+	* CMP1xR   SET
+	* CMP3xR RESET
+	*/	
+	/* 5-95%*/
+//	hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;								//CMP1xR   SET
+//	hhrtim1.Instance->sTimerxRegs[1].CMP3xR = TIM_PERIOD*0.75;  //CMP3xR RESET
+/*TimerB*/
+
+/** TimerC
+	* CMP1xR   SET
+	* CMP3xR RESET
+	*/	
+	/* 5-95%*/
+	hhrtim1.Instance->sTimerxRegs[2].CMP1xR = 0;								//CMP1xR   SET
+	hhrtim1.Instance->sTimerxRegs[2].CMP3xR = TIM_PERIOD*0.75;  //CMP3xR RESET
+/*TimerC*/
+
+	//sTimerxRegs[0]---->TimerA
+	//sTimerxRegs[1]---->TimerB
+	//sTimerxRegs[2]---->TimerC
+	//sTimerxRegs[3]---->TimerD
+	//sTimerxRegs[4]---->TimerE
+	
+	//hhrtim1.Instance->sTimerxRegs[2].CMP1xR = TIM_PERIOD*0.5f;
 	//	if(i>=999)i = 0;
 	//SIN = sinf(0.01f);
 	
-	
+  //__HAL_HRTIM_SETCOMPARE(&hhrtim1, HRTIM_TIMERINDEX_TIMER_A, HRTIM_COMPAREUNIT_1, TIM_PERIOD);
 
   /* USER CODE END HRTIM1_Master_IRQn 0 */
   /* USER CODE BEGIN HRTIM1_Master_IRQn 1 */
 	
 	/*70ns delay*/
-	__HAL_HRTIM_MASTER_CLEAR_IT(&hhrtim1, HRTIM_MASTER_IT_MUPD);
-	GPIOC->BRR = GPIO_PIN_2;	//GPIO_PIN_RESET
+	__HAL_HRTIM_MASTER_CLEAR_IT(&hhrtim1, HRTIM_MASTER_IT_MUPD); //Clear IT
+	GPIOC->BRR = GPIO_PIN_1;	//GPIO_PIN_RESET
 	
   /* USER CODE END HRTIM1_Master_IRQn 1 */
 }

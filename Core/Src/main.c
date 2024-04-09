@@ -129,6 +129,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 	//uint16_t i = 0;
 	GPIOC->BSRR = GPIO_PIN_3;
+	//hhrtim1.Instance->sTimerxRegs[0].CMP1xR = 85;
+	//__HAL_HRTIM_SETCOMPARE(&hhrtim1, HRTIM_TIMERINDEX_TIMER_A, HRTIM_COMPAREUNIT_1, 85);
+
   while (1)
   {
     /* USER CODE END WHILE */
