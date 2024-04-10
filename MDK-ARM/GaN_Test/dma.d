@@ -32,4 +32,5 @@ gan_test/dma.o: ..\Core\Src\dma.c ..\Core\Inc\dma.h ..\Core\Inc\main.h \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_hrtim.h \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_pwr.h \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_pwr_ex.h \
-  D:\Program\ Files\Keil_v5\ARM\ARMCLANG\Bin\..\include\math.h
+  D:\Program\ Files\Keil_v5\ARM\ARMCLANG\Bin\..\include\math.h \
+  ..\BSW\mos_table.h ..\Core\Inc\main.h

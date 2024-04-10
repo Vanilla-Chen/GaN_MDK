@@ -33,4 +33,4 @@ gan_test/stm32g4xx_it.o: ..\Core\Src\stm32g4xx_it.c ..\Core\Inc\main.h \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_pwr.h \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_pwr_ex.h \
   D:\Program\ Files\Keil_v5\ARM\ARMCLANG\Bin\..\include\math.h \
-  ..\Core\Inc\stm32g4xx_it.h
+  ..\BSW\mos_table.h ..\Core\Inc\stm32g4xx_it.h

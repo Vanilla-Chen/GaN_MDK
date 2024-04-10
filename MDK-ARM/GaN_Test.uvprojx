@@ -338,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define>STM32G474xx,USE_HAL_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32G4xx_HAL_Driver/Inc;../Drivers/CMSIS/Device/ST/STM32G4xx/Include;../Drivers/CMSIS/Include;../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32G4xx_HAL_Driver/Inc;../Drivers/CMSIS/Device/ST/STM32G4xx/Include;../Drivers/CMSIS/Include;../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy;../BSW</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1829,6 +1829,21 @@
                   </Cads>
                 </FileArmAds>
               </FileOption>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>BSW</GroupName>
+          <Files>
+            <File>
+              <FileName>mos_table.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\BSW\mos_table.c</FilePath>
+            </File>
+            <File>
+              <FileName>mos_table.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\BSW\mos_table.h</FilePath>
             </File>
           </Files>
         </Group>

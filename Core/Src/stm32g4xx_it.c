@@ -22,6 +22,7 @@
 #include "stm32g4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -108,10 +109,21 @@ void HRTIM1_Master_IRQHandler(void)
 {
   /* USER CODE BEGIN HRTIM1_Master_IRQn 0 */
 	volatile static float SIN;
-	static uint16_t i;
-	/*70ns delay*/
-	GPIOC->BSRR = GPIO_PIN_1;	//GPIO_PIN_SET
+	static uint16_t open_loop_cnt = 0;
+	static uint16_t duty_B1 = 0;
+	static uint16_t duty_C1 = 0;
+	static uint16_t duty_A1 = 0;
 	
+	/* DEBUG */
+	/*70ns delay*/
+	//GPIOC->BSRR = GPIO_PIN_1;	//GPIO_PIN_SET
+	/* DEBUG */
+	
+	
+/** MASTER_PERIOD 5440
+	* TIM_PERIOD		2720
+	* 
+	*/
 /** TimerA
 	* CMP1xR   SET
 	* CMP3xR RESET	
@@ -128,25 +140,87 @@ void HRTIM1_Master_IRQHandler(void)
 	/* 100% */
 //	hhrtim1.Instance->sTimerxRegs[0].CMP1xR = 0;							
 //	hhrtim1.Instance->sTimerxRegs[0].CMP3xR = TIM_PERIOD+1;   
+
+//	duty_A1 = SL_TABLE[open_loop_cnt];
+//	if(duty_A1 == 1)				/* 100% */
+//	{
+//		hhrtim1.Instance->sTimerxRegs[0].CMP1xR = 0;							
+//		hhrtim1.Instance->sTimerxRegs[0].CMP3xR = TIM_PERIOD+1;   
+//	}
+//	else 									/* 0% */
+//	{
+//		hhrtim1.Instance->sTimerxRegs[0].CMP1xR = TIM_PERIOD+1;		
+//		hhrtim1.Instance->sTimerxRegs[0].CMP3xR = 0;	
+//	}
 /* TimerA */
 	
 /** TimerB
 	* CMP1xR   SET
 	* CMP3xR RESET
+	* @NOTE CMPxxR  Min:	64		
+	*								MAX:	TIM_PERIOD-64
 	*/	
+	/* 0% */
+	hhrtim1.Instance->sTimerxRegs[1].CMP1xR = TIM_PERIOD+1;		
+	hhrtim1.Instance->sTimerxRegs[1].CMP3xR = 0;	
 	/* 5-95%*/
 //	hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;								//CMP1xR   SET
 //	hhrtim1.Instance->sTimerxRegs[1].CMP3xR = TIM_PERIOD*0.75;  //CMP3xR RESET
-/*TimerB*/
+	/* 100% */
+//	hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;							
+//	hhrtim1.Instance->sTimerxRegs[1].CMP3xR = TIM_PERIOD+1;   
+	
+//	duty_B1 = FT_TABLE[open_loop_cnt];
+//	if(duty_B1 > 64 && duty_B1 < TIM_PERIOD-64)
+//	{
+//		hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;				//CMP1xR   SET
+//		hhrtim1.Instance->sTimerxRegs[1].CMP3xR = duty_B1;  //CMP3xR RESET
+//	}
+//	else if(duty_B1 < 64)	/* 0% */
+//	{
+//		hhrtim1.Instance->sTimerxRegs[1].CMP1xR = TIM_PERIOD+1;		
+//		hhrtim1.Instance->sTimerxRegs[1].CMP3xR = 0;	
+//	}
+//	else									/* 100% */
+//	{
+//		hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;							
+//		hhrtim1.Instance->sTimerxRegs[1].CMP3xR = TIM_PERIOD+1;   
+//	}
+/* TimerB */
 
 /** TimerC
 	* CMP1xR   SET
 	* CMP3xR RESET
+	* @NOTE CMPxxR  Min:	64		
+	*								MAX:	TIM_PERIOD-64
 	*/	
+	/* 0% */
+//	hhrtim1.Instance->sTimerxRegs[2].CMP1xR = TIM_PERIOD+1;		
+//	hhrtim1.Instance->sTimerxRegs[2].CMP3xR = 0;	
 	/* 5-95%*/
-	hhrtim1.Instance->sTimerxRegs[2].CMP1xR = 0;								//CMP1xR   SET
-	hhrtim1.Instance->sTimerxRegs[2].CMP3xR = TIM_PERIOD*0.75;  //CMP3xR RESET
-/*TimerC*/
+//	hhrtim1.Instance->sTimerxRegs[2].CMP1xR = TIM_PERIOD*0.75;								//CMP1xR   SET
+//	hhrtim1.Instance->sTimerxRegs[2].CMP3xR = TIM_PERIOD*0.75;  //CMP3xR RESET
+	/* 100% */
+	hhrtim1.Instance->sTimerxRegs[2].CMP1xR = 0;							
+	hhrtim1.Instance->sTimerxRegs[2].CMP3xR = TIM_PERIOD+1;
+	
+//	duty_C1 = FB_TABLE[open_loop_cnt];
+//	if(duty_C1 > 64 && duty_C1 < TIM_PERIOD-64)
+//	{
+//		hhrtim1.Instance->sTimerxRegs[2].CMP1xR = 0;				//CMP1xR   SET
+//		hhrtim1.Instance->sTimerxRegs[2].CMP3xR = duty_C1;  //CMP3xR RESET
+//	}
+//	else if(duty_C1 < 64)	/* 0% */
+//	{
+//		hhrtim1.Instance->sTimerxRegs[2].CMP1xR = TIM_PERIOD+1;		
+//		hhrtim1.Instance->sTimerxRegs[2].CMP3xR = 0;	
+//	}
+//	else									/* 100% */
+//	{
+//		hhrtim1.Instance->sTimerxRegs[2].CMP1xR = 0;							
+//		hhrtim1.Instance->sTimerxRegs[2].CMP3xR = TIM_PERIOD+1;   
+//	}
+/* TimerC */
 
 	//sTimerxRegs[0]---->TimerA
 	//sTimerxRegs[1]---->TimerB
@@ -154,7 +228,6 @@ void HRTIM1_Master_IRQHandler(void)
 	//sTimerxRegs[3]---->TimerD
 	//sTimerxRegs[4]---->TimerE
 	
-	//hhrtim1.Instance->sTimerxRegs[2].CMP1xR = TIM_PERIOD*0.5f;
 	//	if(i>=999)i = 0;
 	//SIN = sinf(0.01f);
 	
@@ -165,7 +238,12 @@ void HRTIM1_Master_IRQHandler(void)
 	
 	/*70ns delay*/
 	__HAL_HRTIM_MASTER_CLEAR_IT(&hhrtim1, HRTIM_MASTER_IT_MUPD); //Clear IT
-	GPIOC->BRR = GPIO_PIN_1;	//GPIO_PIN_RESET
+	if(open_loop_cnt < 999) open_loop_cnt++;
+	else open_loop_cnt = 0;
+	/* DEBUG */
+	//GPIOC->BRR = GPIO_PIN_1;	//GPIO_PIN_RESET
+	/* DEBUG */
+	
 	
   /* USER CODE END HRTIM1_Master_IRQn 1 */
 }

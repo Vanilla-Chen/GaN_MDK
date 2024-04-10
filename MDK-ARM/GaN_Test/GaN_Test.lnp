@@ -27,6 +27,7 @@
 "gan_test\stm32g4xx_hal_hrtim.o"
 "gan_test\stm32g4xx_hal_tim.o"
 "gan_test\stm32g4xx_hal_tim_ex.o"
+"gan_test\mos_table.o"
 --strict --scatter "GaN_Test\GaN_Test.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
