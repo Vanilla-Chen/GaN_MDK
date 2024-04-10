@@ -21,6 +21,7 @@
 #include "adc.h"
 #include "dma.h"
 #include "hrtim.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -97,7 +98,10 @@ int main(void)
   MX_DMA_Init();
   MX_HRTIM1_Init();
   MX_ADC1_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
+	
+//	HAL_Delay(50000);
 
 	HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TB1|
 																					HRTIM_OUTPUT_TC1|

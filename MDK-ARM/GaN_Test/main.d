@@ -32,6 +32,9 @@ gan_test/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_hrtim.h \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_pwr.h \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_pwr_ex.h \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_uart.h \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_uart_ex.h \
   D:\Program\ Files\Keil_v5\ARM\ARMCLANG\Bin\..\include\math.h \
   ..\BSW\mos_table.h ..\Core\Inc\adc.h ..\Core\Inc\main.h \
-  ..\Core\Inc\dma.h ..\Core\Inc\hrtim.h ..\Core\Inc\gpio.h
+  ..\Core\Inc\dma.h ..\Core\Inc\hrtim.h ..\Core\Inc\usart.h \
+  ..\Core\Inc\gpio.h

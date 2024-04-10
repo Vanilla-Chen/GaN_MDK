@@ -1,6 +1,5 @@
-gan_test/stm32g4xx_hal_rcc.o: \
-  ..\Drivers\STM32G4xx_HAL_Driver\Src\stm32g4xx_hal_rcc.c \
-  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal.h \
+gan_test/usart.o: ..\Core\Src\usart.c ..\Core\Inc\usart.h \
+  ..\Core\Inc\main.h ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal.h \
   ..\Core\Inc\stm32g4xx_hal_conf.h \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_rcc.h \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_def.h \
@@ -34,4 +33,6 @@ gan_test/stm32g4xx_hal_rcc.o: \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_pwr.h \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_pwr_ex.h \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_uart.h \
-  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_uart_ex.h
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_uart_ex.h \
+  D:\Program\ Files\Keil_v5\ARM\ARMCLANG\Bin\..\include\math.h \
+  ..\BSW\mos_table.h ..\Core\Inc\main.h

@@ -32,5 +32,7 @@ gan_test/mos_table.o: ..\BSW\mos_table.c ..\BSW\mos_table.h \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_hrtim.h \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_pwr.h \
   ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_pwr_ex.h \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_uart.h \
+  ..\Drivers\STM32G4xx_HAL_Driver\Inc\stm32g4xx_hal_uart_ex.h \
   D:\Program\ Files\Keil_v5\ARM\ARMCLANG\Bin\..\include\math.h \
   ..\BSW\mos_table.h
