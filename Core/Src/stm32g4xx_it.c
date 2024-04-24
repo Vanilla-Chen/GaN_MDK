@@ -108,8 +108,8 @@ void DMA1_Channel1_IRQHandler(void)
 void HRTIM1_Master_IRQHandler(void)
 {
   /* USER CODE BEGIN HRTIM1_Master_IRQn 0 */
-	#define DEBUG
-	//#define RELEASE
+	//#define DEBUG
+	#define RELEASE
 
 	static uint16_t bit_static;
 	volatile static float SIN;
@@ -128,7 +128,7 @@ void HRTIM1_Master_IRQHandler(void)
 	* TIM_PERIOD		2720
 	* 
 	*/
-/** TimerA
+/** TimerA	A1:BOT1 A2:TOP1
 	* CMP1xR   SET
 	* CMP3xR RESET	
 	* TA1+  TA2-
@@ -153,7 +153,7 @@ void HRTIM1_Master_IRQHandler(void)
 //		hhrtim1.Instance->sTimerxRegs[0].CMP3xR = 0;							
 		/* 5-95% */
 	//	hhrtim1.Instance->sTimerxRegs[0].CMP1xR = 0;								
-	//	hhrtim1.Instance->sTimerxRegs[0].CMP3xR = TIM_PERIOD-64;  							//Min 64
+	//	hhrtim1.Instance->sTimerxRegs[0].CMP3xR = TIM_PERIOD-64;  		//Min 64
 		/* 100% */
 //		hhrtim1.Instance->sTimerxRegs[0].CMP1xR = 0;							
 //		hhrtim1.Instance->sTimerxRegs[0].CMP3xR = TIM_PERIOD+1;   
@@ -172,26 +172,15 @@ void HRTIM1_Master_IRQHandler(void)
 	#endif
 /* TimerA end */
 	
-/** TimerB
+	
+	
+/** TimerB	TOP 2
 	* CMP1xR   SET
 	* CMP3xR RESET
 	* @NOTE CMPxxR  Min:	64		
 	*								MAX:	TIM_PERIOD-64
 	*/	
 	#ifdef DEBUG
-	
-//	bit_static = 1-bit_static;
-//	if(bit_static)
-//	{
-//		hhrtim1.Instance->sTimerxRegs[1].CMP1xR = TIM_PERIOD+1;		
-//		hhrtim1.Instance->sTimerxRegs[1].CMP3xR = 0;
-//	}
-//	else
-//	{
-//		hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;							
-//		hhrtim1.Instance->sTimerxRegs[1].CMP3xR = TIM_PERIOD+1;   
-//	}
-
 		duty_B1 = FT_TABLE[open_loop_cnt];
 		if(duty_B1 > 64 && duty_B1 < TIM_PERIOD-64)
 		{
@@ -238,7 +227,7 @@ void HRTIM1_Master_IRQHandler(void)
 #endif
 /* TimerB end */
 
-/** TimerC
+/** TimerC	BOT2
 	* CMP1xR   SET
 	* CMP3xR RESET
 	* @NOTE CMPxxR  Min:	64		
