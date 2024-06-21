@@ -820,7 +820,7 @@ ARM Macro Assembler    Page 13
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --depend=g
 an_test\startup_stm32g474xx.d -ogan_test\startup_stm32g474xx.o -I.\RTE\_GaN_Tes
-t -I"D:\Program Files\Arm\Packs\ARM\CMSIS\5.5.1\CMSIS\Core\Include" -I"D:\Progr
+t -I"D:\Program Files\Arm\Packs\ARM\CMSIS\5.9.0\CMSIS\Core\Include" -I"D:\Progr
 am Files\Arm\Packs\Keil\STM32G4xx_DFP\1.5.0\Drivers\CMSIS\Device\ST\STM32G4xx\I
 nclude" --predefine="__UVISION_VERSION SETA 528" --predefine="_RTE_ SETA 1" --p
 redefine="STM32G474xx SETA 1" --list=startup_stm32g474xx.lst startup_stm32g474x

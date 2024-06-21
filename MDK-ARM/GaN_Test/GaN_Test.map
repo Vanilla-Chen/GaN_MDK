@@ -104,8 +104,8 @@ Section Cross References
     stm32g4xx_it.o(.text.HRTIM1_Master_IRQHandler) refers to stm32g4xx_it.o(.bss.HRTIM1_Master_IRQHandler.open_loop_cnt) for HRTIM1_Master_IRQHandler.open_loop_cnt
     stm32g4xx_it.o(.text.HRTIM1_Master_IRQHandler) refers to mos_table.o(.data.SL_TABLE) for SL_TABLE
     stm32g4xx_it.o(.text.HRTIM1_Master_IRQHandler) refers to hrtim.o(.bss.hhrtim1) for hhrtim1
-    stm32g4xx_it.o(.text.HRTIM1_Master_IRQHandler) refers to mos_table.o(.data.FT_TABLE) for FT_TABLE
     stm32g4xx_it.o(.text.HRTIM1_Master_IRQHandler) refers to mos_table.o(.data.FB_TABLE) for FB_TABLE
+    stm32g4xx_it.o(.text.HRTIM1_Master_IRQHandler) refers to mos_table.o(.data.FT_TABLE) for FT_TABLE
     stm32g4xx_it.o(.ARM.exidx.text.HRTIM1_Master_IRQHandler) refers to stm32g4xx_it.o(.text.HRTIM1_Master_IRQHandler) for [Anonymous Symbol]
     stm32g4xx_hal_msp.o(.text.HAL_MspInit) refers to stm32g4xx_hal_cortex.o(.text.HAL_NVIC_SetPriorityGrouping) for HAL_NVIC_SetPriorityGrouping
     stm32g4xx_hal_msp.o(.text.HAL_MspInit) refers to stm32g4xx_hal_cortex.o(.text.HAL_NVIC_SetPriority) for HAL_NVIC_SetPriority
