@@ -52,6 +52,7 @@ extern UART_HandleTypeDef huart1;
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+extern uint16_t adc1_val_buf[];
 /* VOFA */
 #define CH_COUNT 1
 struct FOFA_Frame {
@@ -59,9 +60,9 @@ struct FOFA_Frame {
     uint8_t tail[4];
 };
 struct FOFA_Frame UART_FRAME = {		
-	.fdata = {0},
-	.tail = {0x00,0x00,0x80,0x7f}
+	0,0x00,0x00,0x80,0x7f
 };	
+uint8_t UART_FLAG = 0;
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -95,7 +96,7 @@ void DMA1_Channel1_IRQHandler(void)
 	//GPIOC->BSRR = GPIO_PIN_2;	//GPIO_PIN_SET
   /* USER CODE END DMA1_Channel1_IRQn 0 */
   /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
-	
+	//GPIOC->BSRR = GPIO_PIN_1;	//GPIO_PIN_SET
 	/* Clear the transfer complete flag */
 	hdma_adc1.DmaBaseAddress->IFCR = ((uint32_t)DMA_ISR_TCIF1 << (hdma_adc1.ChannelIndex & 0x1FU));
 	/* Process Unlocked */
@@ -108,6 +109,7 @@ void DMA1_Channel1_IRQHandler(void)
 	/*284ns delay*/
 	//GPIOC->BRR = GPIO_PIN_2;	//GPIO_PIN_RESET
 	//HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adc1_val_buf, (3*1));
+	//GPIOC->BRR = GPIO_PIN_1;	//GPIO_PIN_RESET
   /* USER CODE END DMA1_Channel1_IRQn 1 */
 }
 
@@ -119,7 +121,7 @@ void HRTIM1_Master_IRQHandler(void)
   /* USER CODE BEGIN HRTIM1_Master_IRQn 0 */
 	//#define DEBUG
 	#define RELEASE
-
+	//static uint16_t uart_flag_cnt = 0;
 	static uint16_t bit_static;
 	volatile static float SIN;
 	static uint16_t open_loop_cnt = 0;
@@ -127,12 +129,16 @@ void HRTIM1_Master_IRQHandler(void)
 	static uint16_t duty_C1 = 0;
 	static uint16_t duty_A1 = 0;
 	
+	static float V_Load = 0;
+	static float I_Load = 0;
+	static float I_Indu = 0;
 	/* DEBUG */
 	/*70ns delay*/
-	GPIOC->BSRR = GPIO_PIN_1;	//GPIO_PIN_SET
+	//GPIOC->BSRR = GPIO_PIN_1;	//GPIO_PIN_SET
 	/* DEBUG */
-	
-	
+	V_Load = adc1_val_buf[0]*0.00322265625f;
+	I_Load = adc1_val_buf[1]*0.00322265625f;
+	I_Indu = adc1_val_buf[2]*0.00322265625f;
 /** MASTER_PERIOD 5440
 	* TIM_PERIOD		2720
 	* 
@@ -218,8 +224,9 @@ void HRTIM1_Master_IRQHandler(void)
 	hhrtim1.Instance->sTimerxRegs[1].CMP3xR = TIM_PERIOD+1;   
 	#else
 	
-	duty_B1 = 1359;
-//		duty_B1 = FB_TABLE[open_loop_cnt];
+
+		duty_B1 = FB_TABLE[open_loop_cnt];
+		//duty_B1 = 1359;
 		if(duty_B1 > 64 && duty_B1 < TIM_PERIOD-64)
 		{
 			hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;				//CMP1xR   SET
@@ -295,11 +302,46 @@ void HRTIM1_Master_IRQHandler(void)
 	if(open_loop_cnt < 999) open_loop_cnt++;
 	else open_loop_cnt = 0;
 	
-//	UART_FRAME.fdata[0] = open_loop_cnt;
+	UART_FRAME.fdata[0] = V_Load;//V_Load//I_Load //I_Indu
+//	UART_FRAME.fdata[1] = 1;
+	HAL_UART_Transmit_DMA(&huart1, (uint8_t *)&UART_FRAME, (4*CH_COUNT+4));
+	
+//	switch(UART_FLAG){
+//		case 0:
+//			UART_FRAME[uart_flag_cnt].fdata[0] = (float)open_loop_cnt;
+//			UART_FRAME[uart_flag_cnt].fdata[1] = (float)adc1_val_buf[0];
+//			uart_flag_cnt++;
+//			if(uart_flag_cnt >= 999)
+//			{
+//				UART_FLAG = 1;
+//			}
+//			else
+//			{
+//				UART_FLAG = 0;
+//			}
+//			break;
+//		case 1: 	
+//			HAL_UART_Transmit_DMA(&huart1, (uint8_t *)&UART_FRAME, 800);//100*(4*1+4)
+//			UART_FLAG = 2;
+//			break;
+//		case 2:
+//			uart_flag_cnt++;
+//			if(uart_flag_cnt >= 10000)
+//			{
+//				UART_FLAG = 0;
+//				uart_flag_cnt = 0;
+//			}			
+//			else
+//			{
+//				UART_FLAG = 2;
+//			}
+//			break;
+//	}
+
 //	HAL_UART_Transmit_DMA(&huart1, (uint8_t *)&UART_FRAME, (4*CH_COUNT+4));
 	
 	/* DEBUG */
-	GPIOC->BRR = GPIO_PIN_1;	//GPIO_PIN_RESET
+	//GPIOC->BRR = GPIO_PIN_1;	//GPIO_PIN_RESET
 	/* DEBUG */
 	
 	

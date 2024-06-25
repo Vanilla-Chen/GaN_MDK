@@ -60,10 +60,20 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 uint16_t i;
 #define ADC1_CHANNEL_CNT 3 	//
-#define ADC1_CHANNEL_FRE 1	//
-uint16_t adc1_val_buf[ADC1_CHANNEL_CNT*ADC1_CHANNEL_FRE]; //
-uint32_t adc1_aver_val[ADC1_CHANNEL_CNT] = {0}; 					//
-uint16_t value[ADC1_CHANNEL_CNT] = {0};										//
+uint16_t adc1_val_buf[ADC1_CHANNEL_CNT]; //
+//uint32_t adc1_aver_val[ADC1_CHANNEL_CNT] = {0}; 					//
+//uint16_t value[ADC1_CHANNEL_CNT] = {0};										//
+
+///* VOFA */
+//#define CH_COUNT 		2
+//#define FRAME_COUNT 1
+//struct FOFA_Frame {
+//	float fdata[CH_COUNT];		//float 32  4byte 
+//	uint8_t tail[4];
+//};
+//struct FOFA_Frame UART_FRAME[FRAME_COUNT] = {		
+//	{0,0x00,0x00,0x80,0x7f}
+//};	
 
 /* USER CODE END 0 */
 
@@ -133,6 +143,13 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 	//uint16_t i = 0;
 	GPIOC->BSRR = GPIO_PIN_3;
+//	for(i = 0; i < 1000; i++)
+//	{
+//		UART_FRAME[i].tail[0]=0x00;
+//		UART_FRAME[i].tail[1]=0x00;
+//		UART_FRAME[i].tail[2]=0x80;
+//		UART_FRAME[i].tail[3]=0x7f;
+//	}
 	//hhrtim1.Instance->sTimerxRegs[0].CMP1xR = 85;
 	//__HAL_HRTIM_SETCOMPARE(&hhrtim1, HRTIM_TIMERINDEX_TIMER_A, HRTIM_COMPAREUNIT_1, 85);
 
