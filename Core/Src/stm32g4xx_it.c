@@ -22,7 +22,7 @@
 #include "stm32g4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+extern UART_HandleTypeDef huart1;
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -52,7 +52,16 @@
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+/* VOFA */
+#define CH_COUNT 1
+struct FOFA_Frame {
+    float fdata[CH_COUNT];		//float 32  4byte 
+    uint8_t tail[4];
+};
+struct FOFA_Frame UART_FRAME = {		
+	.fdata = {0},
+	.tail = {0x00,0x00,0x80,0x7f}
+};	
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
@@ -120,7 +129,7 @@ void HRTIM1_Master_IRQHandler(void)
 	
 	/* DEBUG */
 	/*70ns delay*/
-	//GPIOC->BSRR = GPIO_PIN_1;	//GPIO_PIN_SET
+	GPIOC->BSRR = GPIO_PIN_1;	//GPIO_PIN_SET
 	/* DEBUG */
 	
 	
@@ -208,7 +217,9 @@ void HRTIM1_Master_IRQHandler(void)
 	hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;							
 	hhrtim1.Instance->sTimerxRegs[1].CMP3xR = TIM_PERIOD+1;   
 	#else
-		duty_B1 = FB_TABLE[open_loop_cnt];
+	
+	duty_B1 = 1359;
+//		duty_B1 = FB_TABLE[open_loop_cnt];
 		if(duty_B1 > 64 && duty_B1 < TIM_PERIOD-64)
 		{
 			hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;				//CMP1xR   SET
@@ -283,8 +294,12 @@ void HRTIM1_Master_IRQHandler(void)
 	__HAL_HRTIM_MASTER_CLEAR_IT(&hhrtim1, HRTIM_MASTER_IT_MUPD); //Clear IT
 	if(open_loop_cnt < 999) open_loop_cnt++;
 	else open_loop_cnt = 0;
+	
+//	UART_FRAME.fdata[0] = open_loop_cnt;
+//	HAL_UART_Transmit_DMA(&huart1, (uint8_t *)&UART_FRAME, (4*CH_COUNT+4));
+	
 	/* DEBUG */
-	//GPIOC->BRR = GPIO_PIN_1;	//GPIO_PIN_RESET
+	GPIOC->BRR = GPIO_PIN_1;	//GPIO_PIN_RESET
 	/* DEBUG */
 	
 	
