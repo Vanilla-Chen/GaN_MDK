@@ -66,6 +66,7 @@ void Error_Handler(void);
 #define TIM_C_DUTY (0.1f)
 
 /* USER CODE BEGIN Private defines */
+extern float 	SINE_TABLE[1000];
 extern uint16_t FT_TABLE[1000];
 extern uint16_t FB_TABLE[1000];
 extern uint16_t SL_TABLE[1000];

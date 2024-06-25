@@ -120,7 +120,7 @@ void HRTIM1_Master_IRQHandler(void)
 {
   /* USER CODE BEGIN HRTIM1_Master_IRQn 0 */
 	//#define DEBUG
-	#define RELEASE
+	//#define RELEASE
 	//static uint16_t uart_flag_cnt = 0;
 	static uint16_t bit_static;
 	volatile static float SIN;
@@ -132,13 +132,127 @@ void HRTIM1_Master_IRQHandler(void)
 	static float V_Load = 0;
 	static float I_Load = 0;
 	static float I_Indu = 0;
+	
+	static float V_err;
+	static float V_I_sum;
+	static float V_PID_OUT;
+	
+	static float I_err;
+	static float I_I_sum;
+	static float I_PID_OUT;
+	
+	/* ADC */
+	V_Load = (adc1_val_buf[0]*0.00322265625f-1.588f)*50.0f;
+	I_Load = (adc1_val_buf[1]*0.00322265625f-1.588f)*2.0f;
+	I_Indu = (adc1_val_buf[2]*0.00322265625f-1.588f)*10.0f;
+	
+	/* */
+	#define V_Set 	(15)
+	#define V_Kp 		(1)
+	#define V_Ki 		(0.01f)
+	
+	V_err = V_Set*SINE_TABLE[open_loop_cnt] - V_Load;
+	V_I_sum += V_err*0.000001f;
+	if(V_I_sum > 50)
+		V_I_sum = 50;
+	else if(V_I_sum < -50)
+		V_I_sum = -50;
+	V_PID_OUT = V_Kp*V_err + V_Ki*V_I_sum;
+	/* */
+	
+	/* */
+	V_PID_OUT += I_Load;
+	
+	#define I_Kp 	(1)
+	#define I_Ki 	(0.01f)
+	
+	I_err = V_PID_OUT - I_Indu;
+	I_I_sum += I_err*0.000001f;
+	if(I_I_sum > 20)
+		I_I_sum = 20;
+	else if(I_I_sum < -20)
+		I_I_sum = -20;
+	I_PID_OUT = I_Kp*I_err + I_Ki*I_I_sum;
+	
+	I_PID_OUT += V_Load;
+	/* */
+	
+	/* */
+	#define V_BUS (20.0f)
+	I_PID_OUT *= 1/V_BUS; 
+	
+	if(I_PID_OUT > 1)
+		I_PID_OUT = 1;
+	else if(I_PID_OUT < -1)
+		I_PID_OUT = -1;
+	
+	I_PID_OUT *= 2720.0f;
+	/* */
+	
 	/* DEBUG */
 	/*70ns delay*/
 	//GPIOC->BSRR = GPIO_PIN_1;	//GPIO_PIN_SET
 	/* DEBUG */
-	V_Load = adc1_val_buf[0]*0.00322265625f;
-	I_Load = adc1_val_buf[1]*0.00322265625f;
-	I_Indu = adc1_val_buf[2]*0.00322265625f;
+
+	if(I_PID_OUT > 0)
+	{	//Low Fre
+		//A			/* 0% */
+		hhrtim1.Instance->sTimerxRegs[0].CMP1xR = TIM_PERIOD+1;		
+		hhrtim1.Instance->sTimerxRegs[0].CMP3xR = 0;
+		//Hig Fre
+		//B
+		duty_B1 = (uint16_t)I_PID_OUT;
+		//duty_B1 = 1359;
+		if(duty_B1 > 64 && duty_B1 < TIM_PERIOD-64)
+		{
+			hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;				//CMP1xR   SET
+			hhrtim1.Instance->sTimerxRegs[1].CMP3xR = duty_B1;  //CMP3xR RESET
+		}
+		else if(duty_B1 < 64)	/* 0% */
+		{
+			hhrtim1.Instance->sTimerxRegs[1].CMP1xR = TIM_PERIOD+1;		
+			hhrtim1.Instance->sTimerxRegs[1].CMP3xR = 0;	
+		}
+		else									/* 100% */
+		{
+			hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;							
+			hhrtim1.Instance->sTimerxRegs[1].CMP3xR = TIM_PERIOD+1;   
+		}
+		//B			/* 0% */
+		hhrtim1.Instance->sTimerxRegs[2].CMP1xR = TIM_PERIOD+1;		
+		hhrtim1.Instance->sTimerxRegs[2].CMP3xR = 0;	
+	}
+	else
+	{	//Low Fre
+		//A			/* 100% */
+		hhrtim1.Instance->sTimerxRegs[0].CMP1xR = 0;							
+		hhrtim1.Instance->sTimerxRegs[0].CMP3xR = TIM_PERIOD+1;   
+		//Hig Fre
+		//B 		/* 0% */
+		hhrtim1.Instance->sTimerxRegs[1].CMP1xR = TIM_PERIOD+1;		
+		hhrtim1.Instance->sTimerxRegs[1].CMP3xR = 0;	
+		//C 		I_PID_OUT
+		duty_C1 = -((uint16_t)I_PID_OUT);
+		if(duty_C1 > 64 && duty_C1 < TIM_PERIOD-64)
+		{
+			hhrtim1.Instance->sTimerxRegs[2].CMP1xR = 0;				//CMP1xR   SET
+			hhrtim1.Instance->sTimerxRegs[2].CMP3xR = duty_C1;  //CMP3xR RESET
+		}
+		else if(duty_C1 < 64)	/* 0% */
+		{
+			hhrtim1.Instance->sTimerxRegs[2].CMP1xR = TIM_PERIOD+1;		
+			hhrtim1.Instance->sTimerxRegs[2].CMP3xR = 0;	
+		}
+		else									/* 100% */
+		{
+			hhrtim1.Instance->sTimerxRegs[2].CMP1xR = 0;							
+			hhrtim1.Instance->sTimerxRegs[2].CMP3xR = TIM_PERIOD+1;   
+		}
+		
+		
+	}
+	
+	
 /** MASTER_PERIOD 5440
 	* TIM_PERIOD		2720
 	* 
@@ -173,17 +287,17 @@ void HRTIM1_Master_IRQHandler(void)
 //		hhrtim1.Instance->sTimerxRegs[0].CMP1xR = 0;							
 //		hhrtim1.Instance->sTimerxRegs[0].CMP3xR = TIM_PERIOD+1;   
 	#else
-		duty_A1 = SL_TABLE[open_loop_cnt];
-		if(duty_A1 == 1)				/* 100% */
-		{
-			hhrtim1.Instance->sTimerxRegs[0].CMP1xR = 0;							
-			hhrtim1.Instance->sTimerxRegs[0].CMP3xR = TIM_PERIOD+1;   
-		}
-		else 									/* 0% */
-		{
-			hhrtim1.Instance->sTimerxRegs[0].CMP1xR = TIM_PERIOD+1;		
-			hhrtim1.Instance->sTimerxRegs[0].CMP3xR = 0;	
-		}
+//		duty_A1 = SL_TABLE[open_loop_cnt];
+//		if(duty_A1 == 1)				/* 100% */
+//		{
+//			hhrtim1.Instance->sTimerxRegs[0].CMP1xR = 0;							
+//			hhrtim1.Instance->sTimerxRegs[0].CMP3xR = TIM_PERIOD+1;   
+//		}
+//		else 										/* 0% */
+//		{
+//			hhrtim1.Instance->sTimerxRegs[0].CMP1xR = TIM_PERIOD+1;		
+//			hhrtim1.Instance->sTimerxRegs[0].CMP3xR = 0;	
+//		}
 	#endif
 /* TimerA end */
 	
@@ -225,23 +339,23 @@ void HRTIM1_Master_IRQHandler(void)
 	#else
 	
 
-		duty_B1 = FB_TABLE[open_loop_cnt];
-		//duty_B1 = 1359;
-		if(duty_B1 > 64 && duty_B1 < TIM_PERIOD-64)
-		{
-			hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;				//CMP1xR   SET
-			hhrtim1.Instance->sTimerxRegs[1].CMP3xR = duty_B1;  //CMP3xR RESET
-		}
-		else if(duty_B1 < 64)	/* 0% */
-		{
-			hhrtim1.Instance->sTimerxRegs[1].CMP1xR = TIM_PERIOD+1;		
-			hhrtim1.Instance->sTimerxRegs[1].CMP3xR = 0;	
-		}
-		else									/* 100% */
-		{
-			hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;							
-			hhrtim1.Instance->sTimerxRegs[1].CMP3xR = TIM_PERIOD+1;   
-		}
+//		duty_B1 = FB_TABLE[open_loop_cnt];
+//		//duty_B1 = 1359;
+//		if(duty_B1 > 64 && duty_B1 < TIM_PERIOD-64)
+//		{
+//			hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;				//CMP1xR   SET
+//			hhrtim1.Instance->sTimerxRegs[1].CMP3xR = duty_B1;  //CMP3xR RESET
+//		}
+//		else if(duty_B1 < 64)	/* 0% */
+//		{
+//			hhrtim1.Instance->sTimerxRegs[1].CMP1xR = TIM_PERIOD+1;		
+//			hhrtim1.Instance->sTimerxRegs[1].CMP3xR = 0;	
+//		}
+//		else									/* 100% */
+//		{
+//			hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;							
+//			hhrtim1.Instance->sTimerxRegs[1].CMP3xR = TIM_PERIOD+1;   
+//		}
 #endif
 /* TimerB end */
 
@@ -262,22 +376,22 @@ void HRTIM1_Master_IRQHandler(void)
 //	hhrtim1.Instance->sTimerxRegs[2].CMP1xR = 0;							
 //	hhrtim1.Instance->sTimerxRegs[2].CMP3xR = TIM_PERIOD+1;
 	#else
-		duty_C1 = FT_TABLE[open_loop_cnt];
-		if(duty_C1 > 64 && duty_C1 < TIM_PERIOD-64)
-		{
-			hhrtim1.Instance->sTimerxRegs[2].CMP1xR = 0;				//CMP1xR   SET
-			hhrtim1.Instance->sTimerxRegs[2].CMP3xR = duty_C1;  //CMP3xR RESET
-		}
-		else if(duty_C1 < 64)	/* 0% */
-		{
-			hhrtim1.Instance->sTimerxRegs[2].CMP1xR = TIM_PERIOD+1;		
-			hhrtim1.Instance->sTimerxRegs[2].CMP3xR = 0;	
-		}
-		else									/* 100% */
-		{
-			hhrtim1.Instance->sTimerxRegs[2].CMP1xR = 0;							
-			hhrtim1.Instance->sTimerxRegs[2].CMP3xR = TIM_PERIOD+1;   
-		}
+//		duty_C1 = FT_TABLE[open_loop_cnt];
+//		if(duty_C1 > 64 && duty_C1 < TIM_PERIOD-64)
+//		{
+//			hhrtim1.Instance->sTimerxRegs[2].CMP1xR = 0;				//CMP1xR   SET
+//			hhrtim1.Instance->sTimerxRegs[2].CMP3xR = duty_C1;  //CMP3xR RESET
+//		}
+//		else if(duty_C1 < 64)	/* 0% */
+//		{
+//			hhrtim1.Instance->sTimerxRegs[2].CMP1xR = TIM_PERIOD+1;		
+//			hhrtim1.Instance->sTimerxRegs[2].CMP3xR = 0;	
+//		}
+//		else									/* 100% */
+//		{
+//			hhrtim1.Instance->sTimerxRegs[2].CMP1xR = 0;							
+//			hhrtim1.Instance->sTimerxRegs[2].CMP3xR = TIM_PERIOD+1;   
+//		}
 	#endif	
 /* TimerC end */
 
