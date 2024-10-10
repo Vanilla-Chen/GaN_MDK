@@ -20,7 +20,7 @@
 #include "main.h"
 #include "adc.h"
 #include "dma.h"
-#include "hrtim.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -106,29 +106,26 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
-  MX_HRTIM1_Init();
   MX_ADC1_Init();
   MX_USART1_UART_Init();
+  MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
 	
 //	HAL_Delay(50000);
 
-	HAL_HRTIM_WaveformOutputStart(&hhrtim1, HRTIM_OUTPUT_TB1|
-																					HRTIM_OUTPUT_TC1|
-																					HRTIM_OUTPUT_TA1|
-																					HRTIM_OUTPUT_TA2);
-	HAL_HRTIM_WaveformCounterStart(&hhrtim1,HRTIM_TIMERID_MASTER|
-																					HRTIM_TIMERID_TIMER_A|
-																					HRTIM_TIMERID_TIMER_B|
-																					HRTIM_TIMERID_TIMER_C
-																					);
-	HAL_HRTIM_WaveformCounterStart_IT(&hhrtim1, HRTIM_TIMERID_MASTER);
-	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adc1_val_buf, (ADC1_CHANNEL_CNT*1));
+	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_1);
+	HAL_TIMEx_PWMN_Start(&htim1,TIM_CHANNEL_1);
+	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_2);
+	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_3);
 	
+	HAL_TIM_Base_Start_IT(&htim1);		//开启定时器中断，在main函数里面初始化
+	
+	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adc1_val_buf, (ADC1_CHANNEL_CNT*1));
+	//HAL_ADC_Start_IT(&hadc1);
 	//close DMA all interrupt 
-	__HAL_DMA_DISABLE_IT(&hdma_adc1, (DMA_IT_TC| DMA_IT_HT | DMA_IT_TE));	
+	//__HAL_DMA_DISABLE_IT(&hdma_adc1, (DMA_IT_TC| DMA_IT_HT | DMA_IT_TE));	
 	//close DMA Half transfer complete interrupt 
-	//__HAL_DMA_DISABLE_IT(&hdma_adc1, (DMA_IT_HT | DMA_IT_TE));	
+	__HAL_DMA_DISABLE_IT(&hdma_adc1, (DMA_IT_HT | DMA_IT_TE));	
 
 	/**	Notices (ToDo
 		* ADC sampling location
@@ -142,7 +139,8 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	//uint16_t i = 0;
-	GPIOC->BSRR = GPIO_PIN_3;
+
+
 //	for(i = 0; i < 1000; i++)
 //	{
 //		UART_FRAME[i].tail[0]=0x00;

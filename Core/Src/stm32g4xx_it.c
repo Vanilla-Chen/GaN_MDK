@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 extern UART_HandleTypeDef huart1;
+extern TIM_HandleTypeDef htim1;
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -67,7 +68,7 @@ uint8_t UART_FLAG = 0;
 
 /* External variables --------------------------------------------------------*/
 extern DMA_HandleTypeDef hdma_adc1;
-extern HRTIM_HandleTypeDef hhrtim1;
+extern TIM_HandleTypeDef htim1;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -90,13 +91,15 @@ void DMA1_Channel1_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
 //	static uint16_t i;
-//	if(i)GPIOC->BSRR = GPIO_PIN_2;	//GPIO_PIN_SET
-//  else GPIOC->BRR = GPIO_PIN_2;	//GPIO_PIN_RESET
-	/*252ns delay*/
-	//GPIOC->BSRR = GPIO_PIN_2;	//GPIO_PIN_SET
+//	if(i)GPIOC->BSRR = GPIO_PIN_1;	//GPIO_PIN_SET
+//  else GPIOC->BRR = GPIO_PIN_1;	//GPIO_PIN_RESET
+//	i = 1-i;
+	//GPIOC->BSRR = GPIO_PIN_1;	//GPIO_PIN_SET
+	/* x ns delay*/
+
   /* USER CODE END DMA1_Channel1_IRQn 0 */
   /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
-	//GPIOC->BSRR = GPIO_PIN_1;	//GPIO_PIN_SET
+
 	/* Clear the transfer complete flag */
 	hdma_adc1.DmaBaseAddress->IFCR = ((uint32_t)DMA_ISR_TCIF1 << (hdma_adc1.ChannelIndex & 0x1FU));
 	/* Process Unlocked */
@@ -114,378 +117,89 @@ void DMA1_Channel1_IRQHandler(void)
 }
 
 /**
-  * @brief This function handles HRTIM master timer global interrupt.
+  * @brief This function handles TIM1 update interrupt and TIM16 global interrupt.
   */
-void HRTIM1_Master_IRQHandler(void)
+void TIM1_UP_TIM16_IRQHandler(void)
 {
-  /* USER CODE BEGIN HRTIM1_Master_IRQn 0 */
-	//#define DEBUG
-	//#define RELEASE
-	//static uint16_t uart_flag_cnt = 0;
-	static uint16_t bit_static;
-	volatile static float SIN;
-	static uint16_t open_loop_cnt = 0;
-	static uint16_t duty_B1 = 0;
-	static uint16_t duty_C1 = 0;
-	static uint16_t duty_A1 = 0;
+  /* USER CODE BEGIN TIM1_UP_TIM16_IRQn 0 */
+	/* parameter */
+	//CNT
+	static uint8_t i = 0;
 	
+	//OPEN LOOP
+	static uint16_t OpenLoop_SIN_CNT = 0;
+	
+//	//ADC
 	static float V_Load = 0;
 	static float I_Load = 0;
 	static float I_Indu = 0;
 	
-	static float V_err;
-	static float V_I_sum;
-	static float V_PID_OUT;
-	
-	static float I_err;
-	static float I_I_sum;
-	static float I_PID_OUT;
-	
-	/* ADC */
-	V_Load = (adc1_val_buf[0]*0.00322265625f-1.588f)*50.0f;
-	I_Load = (adc1_val_buf[1]*0.00322265625f-1.588f)*2.0f;
-	I_Indu = (adc1_val_buf[2]*0.00322265625f-1.588f)*10.0f;
-	
-	/* */
-	#define V_Set 	(15)
-	#define V_Kp 		(1)
-	#define V_Ki 		(0.01f)
-	
-	V_err = V_Set*SINE_TABLE[open_loop_cnt] - V_Load;
-	V_I_sum += V_err*0.000001f;
-	if(V_I_sum > 50)
-		V_I_sum = 50;
-	else if(V_I_sum < -50)
-		V_I_sum = -50;
-	V_PID_OUT = V_Kp*V_err + V_Ki*V_I_sum;
-	/* */
-	
-	/* */
-	V_PID_OUT += I_Load;
-	
-	#define I_Kp 	(1)
-	#define I_Ki 	(0.01f)
-	
-	I_err = V_PID_OUT - I_Indu;
-	I_I_sum += I_err*0.000001f;
-	if(I_I_sum > 20)
-		I_I_sum = 20;
-	else if(I_I_sum < -20)
-		I_I_sum = -20;
-	I_PID_OUT = I_Kp*I_err + I_Ki*I_I_sum;
-	
-	I_PID_OUT += V_Load;
-	/* */
-	
-	/* */
-	#define V_BUS (20.0f)
-	I_PID_OUT *= 1/V_BUS; 
-	
-	if(I_PID_OUT > 1)
-		I_PID_OUT = 1;
-	else if(I_PID_OUT < -1)
-		I_PID_OUT = -1;
-	
-	I_PID_OUT *= 2720.0f;
-	/* */
-	
-	/* DEBUG */
-	/*70ns delay*/
-	//GPIOC->BSRR = GPIO_PIN_1;	//GPIO_PIN_SET
-	/* DEBUG */
+	//UART
 
-	if(I_PID_OUT > 0)
-	{	//Low Fre
-		//A			/* 0% */
-		hhrtim1.Instance->sTimerxRegs[0].CMP1xR = TIM_PERIOD+1;		
-		hhrtim1.Instance->sTimerxRegs[0].CMP3xR = 0;
-		//Hig Fre
-		//B
-		duty_B1 = (uint16_t)I_PID_OUT;
-		//duty_B1 = 1359;
-		if(duty_B1 > 64 && duty_B1 < TIM_PERIOD-64)
-		{
-			hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;				//CMP1xR   SET
-			hhrtim1.Instance->sTimerxRegs[1].CMP3xR = duty_B1;  //CMP3xR RESET
-		}
-		else if(duty_B1 < 64)	/* 0% */
-		{
-			hhrtim1.Instance->sTimerxRegs[1].CMP1xR = TIM_PERIOD+1;		
-			hhrtim1.Instance->sTimerxRegs[1].CMP3xR = 0;	
-		}
-		else									/* 100% */
-		{
-			hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;							
-			hhrtim1.Instance->sTimerxRegs[1].CMP3xR = TIM_PERIOD+1;   
-		}
-		//B			/* 0% */
-		hhrtim1.Instance->sTimerxRegs[2].CMP1xR = TIM_PERIOD+1;		
-		hhrtim1.Instance->sTimerxRegs[2].CMP3xR = 0;	
-	}
-	else
-	{	//Low Fre
-		//A			/* 100% */
-		hhrtim1.Instance->sTimerxRegs[0].CMP1xR = 0;							
-		hhrtim1.Instance->sTimerxRegs[0].CMP3xR = TIM_PERIOD+1;   
-		//Hig Fre
-		//B 		/* 0% */
-		hhrtim1.Instance->sTimerxRegs[1].CMP1xR = TIM_PERIOD+1;		
-		hhrtim1.Instance->sTimerxRegs[1].CMP3xR = 0;	
-		//C 		I_PID_OUT
-		duty_C1 = -((uint16_t)I_PID_OUT);
-		if(duty_C1 > 64 && duty_C1 < TIM_PERIOD-64)
-		{
-			hhrtim1.Instance->sTimerxRegs[2].CMP1xR = 0;				//CMP1xR   SET
-			hhrtim1.Instance->sTimerxRegs[2].CMP3xR = duty_C1;  //CMP3xR RESET
-		}
-		else if(duty_C1 < 64)	/* 0% */
-		{
-			hhrtim1.Instance->sTimerxRegs[2].CMP1xR = TIM_PERIOD+1;		
-			hhrtim1.Instance->sTimerxRegs[2].CMP3xR = 0;	
-		}
-		else									/* 100% */
-		{
-			hhrtim1.Instance->sTimerxRegs[2].CMP1xR = 0;							
-			hhrtim1.Instance->sTimerxRegs[2].CMP3xR = TIM_PERIOD+1;   
-		}
+	/* parameter end */
+	
+	if((TIM1->CR1 & 0x10) !=0)
+	{
+		
+		/* ADC */
+		V_Load = ((adc1_val_buf[0]-1986)*0.0008056640625f)*50.0f;
+		I_Load = (adc1_val_buf[1]*0.0008056640625f-1.588f)*2.0f;
+		I_Indu = (adc1_val_buf[2]*0.0008056640625f-1.588f)*10.0f;
+//		V_Load = (adc1_val_buf[0]-1986);
+//		I_Load = (adc1_val_buf[1]);
+//		I_Indu = (adc1_val_buf[2]);
+
+//		if(i)
+//			GPIOC->BSRR = GPIO_PIN_1;	//  SET
+//		else 
+//			GPIOC->BRR = GPIO_PIN_1;		//RESET
+//		i = 1-i;
+		
+//		TIM1->CCR1 = 100;	//A1 A2		PA8	PA11
+//		TIM1->CCR2 = 100;	//B1      PA9
+//		TIM1->CCR3 = 100;	//C1      PA10
 		
 		
-	}
-	
-	
-/** MASTER_PERIOD 5440
-	* TIM_PERIOD		2720
-	* 
-	*/
-/** TimerA	A1:BOT1 A2:TOP1
-	* CMP1xR   SET
-	* CMP3xR RESET	
-	* TA1+  TA2-
-	* @NOTE CMPxxR  Min:	64		
-	*								MAX:	TIM_PERIOD-64
-	*/
-	#ifdef DEBUG
-		duty_A1 = SL_TABLE[open_loop_cnt];
-//		if(duty_A1 == 1)				/* 100% */
-//		{
-//			hhrtim1.Instance->sTimerxRegs[0].CMP1xR = 0;							
-//			hhrtim1.Instance->sTimerxRegs[0].CMP3xR = TIM_PERIOD+1;   
-//		}
-//		else 									/* 0% */
-//		{
-			hhrtim1.Instance->sTimerxRegs[0].CMP1xR = TIM_PERIOD+1;		
-			hhrtim1.Instance->sTimerxRegs[0].CMP3xR = 0;	
-//		}
+		/* OPEN LOOP*/
 		
-		/* 0% */
-//		hhrtim1.Instance->sTimerxRegs[0].CMP1xR = TIM_PERIOD+1;		
-//		hhrtim1.Instance->sTimerxRegs[0].CMP3xR = 0;							
-		/* 5-95% */
-	//	hhrtim1.Instance->sTimerxRegs[0].CMP1xR = 0;								
-	//	hhrtim1.Instance->sTimerxRegs[0].CMP3xR = TIM_PERIOD-64;  		//Min 64
-		/* 100% */
-//		hhrtim1.Instance->sTimerxRegs[0].CMP1xR = 0;							
-//		hhrtim1.Instance->sTimerxRegs[0].CMP3xR = TIM_PERIOD+1;   
-	#else
-//		duty_A1 = SL_TABLE[open_loop_cnt];
-//		if(duty_A1 == 1)				/* 100% */
-//		{
-//			hhrtim1.Instance->sTimerxRegs[0].CMP1xR = 0;							
-//			hhrtim1.Instance->sTimerxRegs[0].CMP3xR = TIM_PERIOD+1;   
-//		}
-//		else 										/* 0% */
-//		{
-//			hhrtim1.Instance->sTimerxRegs[0].CMP1xR = TIM_PERIOD+1;		
-//			hhrtim1.Instance->sTimerxRegs[0].CMP3xR = 0;	
-//		}
-	#endif
-/* TimerA end */
-	
-	
-	
-/** TimerB	TOP 2
-	* CMP1xR   SET
-	* CMP3xR RESET
-	* @NOTE CMPxxR  Min:	64		
-	*								MAX:	TIM_PERIOD-64
-	*/	
-	#ifdef DEBUG
-//		duty_B1 = FT_TABLE[open_loop_cnt];
-//		if(duty_B1 > 64 && duty_B1 < TIM_PERIOD-64)
-//		{
-//			hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;				//CMP1xR   SET
-//			hhrtim1.Instance->sTimerxRegs[1].CMP3xR = duty_B1;  //CMP3xR RESET
-//		}
-//		else if(duty_B1 < 64)	/* 0% */
-//		{
-//			hhrtim1.Instance->sTimerxRegs[1].CMP1xR = TIM_PERIOD+1;		
-//			hhrtim1.Instance->sTimerxRegs[1].CMP3xR = 0;	
-//		}
-//		else									/* 100% */
-//		{
-			hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;							
-			hhrtim1.Instance->sTimerxRegs[1].CMP3xR = TIM_PERIOD+1;   
-//		}
+		TIM1->CCR1 = SL_TABLE[OpenLoop_SIN_CNT];
+		TIM1->CCR2 = FB_TABLE[OpenLoop_SIN_CNT];	
+		TIM1->CCR3 = FT_TABLE[OpenLoop_SIN_CNT];	
+			/* DEBUG */
+//			TIM1->CCR1 = 85;
+//			TIM1->CCR2 = 170;	
+//			TIM1->CCR3 = 0;	
+			/* DEBUG */
 		
-	/* 0% */
-//	hhrtim1.Instance->sTimerxRegs[1].CMP1xR = TIM_PERIOD+1;		
-//	hhrtim1.Instance->sTimerxRegs[1].CMP3xR = 0;	
-	/* 5-95%*/
-//	hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;								//CMP1xR   SET
-//	hhrtim1.Instance->sTimerxRegs[1].CMP3xR = TIM_PERIOD*0.75;  //CMP3xR RESET
-	/* 100% */
-	hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;							
-	hhrtim1.Instance->sTimerxRegs[1].CMP3xR = TIM_PERIOD+1;   
-	#else
-	
-
-//		duty_B1 = FB_TABLE[open_loop_cnt];
-//		//duty_B1 = 1359;
-//		if(duty_B1 > 64 && duty_B1 < TIM_PERIOD-64)
-//		{
-//			hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;				//CMP1xR   SET
-//			hhrtim1.Instance->sTimerxRegs[1].CMP3xR = duty_B1;  //CMP3xR RESET
-//		}
-//		else if(duty_B1 < 64)	/* 0% */
-//		{
-//			hhrtim1.Instance->sTimerxRegs[1].CMP1xR = TIM_PERIOD+1;		
-//			hhrtim1.Instance->sTimerxRegs[1].CMP3xR = 0;	
-//		}
-//		else									/* 100% */
-//		{
-//			hhrtim1.Instance->sTimerxRegs[1].CMP1xR = 0;							
-//			hhrtim1.Instance->sTimerxRegs[1].CMP3xR = TIM_PERIOD+1;   
-//		}
-#endif
-/* TimerB end */
-
-/** TimerC	BOT2
-	* CMP1xR   SET
-	* CMP3xR RESET
-	* @NOTE CMPxxR  Min:	64		
-	*								MAX:	TIM_PERIOD-64
-	*/	
-	#ifdef DEBUG
-	/* 0% */
-	hhrtim1.Instance->sTimerxRegs[2].CMP1xR = TIM_PERIOD+1;		
-	hhrtim1.Instance->sTimerxRegs[2].CMP3xR = 0;	
-	/* 5-95%*/
-//	hhrtim1.Instance->sTimerxRegs[2].CMP1xR = TIM_PERIOD*0.75;								//CMP1xR   SET
-//	hhrtim1.Instance->sTimerxRegs[2].CMP3xR = TIM_PERIOD*0.75;  //CMP3xR RESET
-	/* 100% */
-//	hhrtim1.Instance->sTimerxRegs[2].CMP1xR = 0;							
-//	hhrtim1.Instance->sTimerxRegs[2].CMP3xR = TIM_PERIOD+1;
-	#else
-//		duty_C1 = FT_TABLE[open_loop_cnt];
-//		if(duty_C1 > 64 && duty_C1 < TIM_PERIOD-64)
-//		{
-//			hhrtim1.Instance->sTimerxRegs[2].CMP1xR = 0;				//CMP1xR   SET
-//			hhrtim1.Instance->sTimerxRegs[2].CMP3xR = duty_C1;  //CMP3xR RESET
-//		}
-//		else if(duty_C1 < 64)	/* 0% */
-//		{
-//			hhrtim1.Instance->sTimerxRegs[2].CMP1xR = TIM_PERIOD+1;		
-//			hhrtim1.Instance->sTimerxRegs[2].CMP3xR = 0;	
-//		}
-//		else									/* 100% */
-//		{
-//			hhrtim1.Instance->sTimerxRegs[2].CMP1xR = 0;							
-//			hhrtim1.Instance->sTimerxRegs[2].CMP3xR = TIM_PERIOD+1;   
-//		}
-	#endif	
-/* TimerC end */
-
-
-
-	//sTimerxRegs[0]---->TimerA
-	//sTimerxRegs[1]---->TimerB
-	//sTimerxRegs[2]---->TimerC
-	//sTimerxRegs[3]---->TimerD
-	//sTimerxRegs[4]---->TimerE
-	
-	//	if(i>=999)i = 0;
-	//SIN = sinf(0.01f);
-	
-  //__HAL_HRTIM_SETCOMPARE(&hhrtim1, HRTIM_TIMERINDEX_TIMER_A, HRTIM_COMPAREUNIT_1, TIM_PERIOD);
-
-  /* USER CODE END HRTIM1_Master_IRQn 0 */
-  /* USER CODE BEGIN HRTIM1_Master_IRQn 1 */
-	
-	/*70ns delay*/
-	__HAL_HRTIM_MASTER_CLEAR_IT(&hhrtim1, HRTIM_MASTER_IT_MUPD); //Clear IT
-	if(open_loop_cnt < 999) open_loop_cnt++;
-	else open_loop_cnt = 0;
-	
-	UART_FRAME.fdata[0] = V_Load;//V_Load//I_Load //I_Indu
+		if(OpenLoop_SIN_CNT < 499)
+			OpenLoop_SIN_CNT++;
+		else
+			OpenLoop_SIN_CNT = 0;
+		/* OPEN LOOP END*/
+		
+		/* UART */
+		UART_FRAME.fdata[0] = V_Load;//V_Load//I_Load //I_Indu
 //	UART_FRAME.fdata[1] = 1;
-	HAL_UART_Transmit_DMA(&huart1, (uint8_t *)&UART_FRAME, (4*CH_COUNT+4));
-	
-//	switch(UART_FLAG){
-//		case 0:
-//			UART_FRAME[uart_flag_cnt].fdata[0] = (float)open_loop_cnt;
-//			UART_FRAME[uart_flag_cnt].fdata[1] = (float)adc1_val_buf[0];
-//			uart_flag_cnt++;
-//			if(uart_flag_cnt >= 999)
-//			{
-//				UART_FLAG = 1;
-//			}
-//			else
-//			{
-//				UART_FLAG = 0;
-//			}
-//			break;
-//		case 1: 	
-//			HAL_UART_Transmit_DMA(&huart1, (uint8_t *)&UART_FRAME, 800);//100*(4*1+4)
-//			UART_FLAG = 2;
-//			break;
-//		case 2:
-//			uart_flag_cnt++;
-//			if(uart_flag_cnt >= 10000)
-//			{
-//				UART_FLAG = 0;
-//				uart_flag_cnt = 0;
-//			}			
-//			else
-//			{
-//				UART_FLAG = 2;
-//			}
-//			break;
-//	}
-
-//	HAL_UART_Transmit_DMA(&huart1, (uint8_t *)&UART_FRAME, (4*CH_COUNT+4));
-	
-	/* DEBUG */
-	//GPIOC->BRR = GPIO_PIN_1;	//GPIO_PIN_RESET
-	/* DEBUG */
-	
-	
-  /* USER CODE END HRTIM1_Master_IRQn 1 */
+		HAL_UART_Transmit_DMA(&huart1, (uint8_t *)&UART_FRAME, (4*CH_COUNT+4));
+		/* UART END */
+		
+		/**/
+  /* USER CODE END TIM1_UP_TIM16_IRQn 0 */
+  /* USER CODE BEGIN TIM1_UP_TIM16_IRQn 1 */
+		
+		/* TIM Update event */
+		if (__HAL_TIM_GET_FLAG(&htim1, TIM_FLAG_UPDATE) != RESET)
+		{
+			if (__HAL_TIM_GET_IT_SOURCE(&htim1, TIM_IT_UPDATE) != RESET)
+			{
+				__HAL_TIM_CLEAR_IT(&htim1, TIM_IT_UPDATE);
+				HAL_TIM_PeriodElapsedCallback(&htim1);
+			}
+		}
+	}
+  /* USER CODE END TIM1_UP_TIM16_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
-//void DMA1_Channel1_IRQHandler(void)
-//{
-//  /* USER CODE BEGIN DMA1_Channel1_IRQn 0 */
-////	static uint16_t i;
-////	if(i)GPIOC->BSRR = GPIO_PIN_2;	//GPIO_PIN_SET
-////  else GPIOC->BRR = GPIO_PIN_2;	//GPIO_PIN_RESET
-//	/*252ns delay*/
-//	GPIOC->BSRR = GPIO_PIN_2;	//GPIO_PIN_SET
-//  /* USER CODE END DMA1_Channel1_IRQn 0 */
-//  /* USER CODE BEGIN DMA1_Channel1_IRQn 1 */
-//	
-//	/* Clear the transfer complete flag */
-//	hdma_adc1.DmaBaseAddress->IFCR = ((uint32_t)DMA_ISR_TCIF1 << (hdma_adc1.ChannelIndex & 0x1FU));
-//	/* Process Unlocked */
-//	__HAL_UNLOCK(&hdma_adc1);
-//	if (hdma_adc1.XferCpltCallback != NULL)
-//	{
-//		/* Transfer complete callback */
-//		hdma_adc1.XferCpltCallback(&hdma_adc1);
-//	}
-//	/*284ns delay*/
-//	GPIOC->BRR = GPIO_PIN_2;	//GPIO_PIN_RESET
-//	//HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&adc1_val_buf, (3*1));
-//  /* USER CODE END DMA1_Channel1_IRQn 1 */
-//}
+
 /* USER CODE END 1 */

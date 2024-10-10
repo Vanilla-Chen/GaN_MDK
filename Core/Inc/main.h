@@ -32,7 +32,7 @@ extern "C" {
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "math.h"
-#include "mos_table.h"s
+#include "mos_table.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -58,18 +58,18 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define MASTER_PERIOD (5440)
+#define MASTER_PERIOD (340)
 #define TIM_PERIOD (MASTER_PERIOD/2)
-#define DEADTIME (15)
 #define TIM_A_DUTY (0.5f)
 #define TIM_B_DUTY (0.25f)
+#define DEADTIME (10)
 #define TIM_C_DUTY (0.1f)
 
 /* USER CODE BEGIN Private defines */
-extern float 	SINE_TABLE[1000];
-extern uint16_t FT_TABLE[1000];
-extern uint16_t FB_TABLE[1000];
-extern uint16_t SL_TABLE[1000];
+extern float 	SINE_TABLE[500];
+extern uint16_t FT_TABLE[500];
+extern uint16_t FB_TABLE[500];
+extern uint16_t SL_TABLE[500];
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

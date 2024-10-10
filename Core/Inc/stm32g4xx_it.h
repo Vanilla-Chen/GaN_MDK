@@ -47,7 +47,7 @@
 
 /* Exported functions prototypes ---------------------------------------------*/
 void DMA1_Channel1_IRQHandler(void);
-void HRTIM1_Master_IRQHandler(void);
+void TIM1_UP_TIM16_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */
